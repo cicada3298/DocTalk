@@ -1,0 +1,140 @@
+openapi: 3.0.0
+info:
+  title: DocTalk API (Local Dev)
+  description: API documentation for local development and testing of DocTalk.
+  version: 1.0.0
+  contact:
+    name: Vaibhav Chaudhary
+    email: vaibhavchaudhary898@gmail.com
+
+servers:
+  - url: http://localhost:3001
+    description: Local development server
+
+paths:
+  /auth/register:
+    post:
+      summary: Register new user
+      tags: [Auth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+      responses:
+        "201":
+          description: User registered
+        "400":
+          description: Invalid request
+
+  /auth/login:
+    post:
+      summary: User login
+      tags: [Auth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+      responses:
+        "200":
+          description: Login successful
+        "401":
+          description: Invalid credentials
+
+  /documents:
+    post:
+      summary: Upload a new document
+      tags: [Documents]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [userId, documentContent]
+              properties:
+                userId:
+                  type: string
+                documentContent:
+                  type: string
+      responses:
+        "201":
+          description: Document uploaded
+        "400":
+          description: Bad request
+
+  /documents/{userId}:
+    get:
+      summary: Fetch all documents for a user
+      tags: [Documents]
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of documents
+        "404":
+          description: User not found
+
+  /ai/summarize:
+    post:
+      summary: Generate a summary for document text
+      tags: [AI]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [text]
+              properties:
+                text:
+                  type: string
+      responses:
+        "200":
+          description: Summary returned
+        "400":
+          description: Invalid input
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    User:
+      type: object
+      properties:
+        email: { type: string }
+        password: { type: string }
+
+    Document:
+      type: object
+      properties:
+        userId: { type: string }
+        documentContent: { type: string }
+
+    Error:
+      type: object
+      properties:
+        message: { type: string }
+        code: { type: integer }
