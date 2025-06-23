@@ -30,7 +30,6 @@ const { IncomingForm } = require("formidable");
 const { v4: uuidv4 } = require("uuid");
 const firebaseAdmin = require("firebase-admin");
 const { generateToken } = require("../middleware/jwt");
-require("dotenv").config({ path: "../.env" });
 
 /**
  * @swagger

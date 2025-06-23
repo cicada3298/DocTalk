@@ -87,7 +87,7 @@ const Footer = () => {
       <Box sx={{ display: "flex", justifyContent: "center", gap: 2, mb: 2 }}>
         <IconButton
           component="a"
-          href="https://github.com/hoangsonww/DocTalk-AI-App"
+          href="https://github.com/cicada3298/DocTalk"
           target="_blank"
           rel="noopener noreferrer"
           sx={{ color: "white" }}

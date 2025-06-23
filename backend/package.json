@@ -6,17 +6,14 @@
   "author": "Vaibhav Chaudhary",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/hoangsonww/DocTalk-AI-App.git"
-  },
-  "bugs": {
-    "url": "https://github.com/hoangsonww/DocTalk-AI-App/issues"
+    "url": "git+https://github.com/cicada3298/DocTalk.git"
   },
   "private": false,
   "scripts": {
     "start": "nodemon index.js",
     "build": "echo 'Skipping build step for Vercel'",
     "test": "nodemon index.js",
-    "server": "nodemon index.js",
+    "server": "node index.js",
     "backend": "nodemon index.js",
     "format": "prettier --write **/*.js",
     "vercel-build": "npm install --force && npm run build"

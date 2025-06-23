@@ -386,7 +386,7 @@ const LandingPage = ({ theme }) => {
             functionalities, and how to get started with DocTalk.
           </Typography>
           <Button
-            href="https://github.com/hoangsonww/DocTalk-AI-App"
+            href="https://github.com/cicada3298/DocTalk"
             target="_blank"
             variant="contained"
             sx={{

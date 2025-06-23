@@ -3,13 +3,10 @@
   "version": "1.1.0",
   "description": "This is a fullstack application for DocTalk",
   "license": "MIT",
-  "author": "Son Nguyen",
+  "author": "Vaibhav Chaudhary",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/hoangsonww/DocTalk-AI-App.git"
-  },
-  "bugs": {
-    "url": "https://github.com/hoangsonww/DocTalk-AI-App/issues"
+    "url": "git+https://github.com/cicada3298/DocTalk.git"
   },
   "private": false,
   "dependencies": {

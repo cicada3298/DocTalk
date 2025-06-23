@@ -6,7 +6,7 @@ require("dotenv").config();
 const swaggerDocs = require("./swagger/swagger");
 const { initializeRedis } = require("./redis/redisClient");
 const { authenticateToken } = require("./middleware/jwt");
-
+require("dotenv").config();
 const {
   registerUser,
   loginUser,
@@ -189,6 +189,10 @@ app.use((err, req, res, next) => {
     res.status(401).json({ error: "Unauthorized request" });
   }
   next();
+});
+
+app.get("/health", (req, res) => {
+  res.status(200).send("OK");
 });
 
 // Start the server
