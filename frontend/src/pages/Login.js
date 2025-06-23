@@ -28,13 +28,13 @@ const Login = ({ theme, onLogin }) => {
     setError("");
     try {
       const response = await axios.post(
-        "http://localhost:3001/login",
+        "https://doctalk-31u3.onrender.com/login",
         { email, password },
         {
           headers: {
             "Content-Type": "application/json",
           },
-        },
+        }
       );
 
       onLogin();

@@ -83,51 +83,51 @@ const Profile = ({ theme }) => {
 
   useEffect(() => {
     setRandomAvatar(
-      avatarImages[Math.floor(Math.random() * avatarImages.length)],
+      avatarImages[Math.floor(Math.random() * avatarImages.length)]
     );
 
     if (userId) {
       const fetchData = async () => {
         try {
           const emailResponse = await axios.get(
-            `http://localhost:3001/users/${userId}`,
+            `https://doctalk-31u3.onrender.com/users/${userId}`,
             {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
           );
           const daysResponse = await axios.get(
-            `http://localhost:3001/days-since-joined/${userId}`,
+            `https://doctalk-31u3.onrender.com/days-since-joined/${userId}`,
             {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
           );
           const documentResponse = await axios.get(
-            `http://localhost:3001/document-count/${userId}`,
+            `https://doctalk-31u3.onrender.com/document-count/${userId}`,
             {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
           );
           const joinedDateResponse = await axios.get(
-            `http://localhost:3001/user-joined-date/${userId}`,
+            `https://doctalk-31u3.onrender.com/user-joined-date/${userId}`,
             {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
           );
           const socialMediaResponse = await axios.get(
-            `http://localhost:3001/social-media/${userId}`,
+            `https://doctalk-31u3.onrender.com/social-media/${userId}`,
             {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
           );
 
           if (
@@ -145,7 +145,7 @@ const Profile = ({ theme }) => {
             setDaysSinceJoined(daysResponse.data.days);
             setDocumentCount(documentResponse.data.documentCount);
             setJoinedDate(
-              new Date(joinedDateResponse.data.joinedDate).toLocaleDateString(),
+              new Date(joinedDateResponse.data.joinedDate).toLocaleDateString()
             );
             setSocialMedia(socialMediaResponse.data.socialMedia || {});
           }
@@ -171,16 +171,16 @@ const Profile = ({ theme }) => {
 
     try {
       await axios.post(
-        "http://localhost:3001/update-email",
+        "https://doctalk-31u3.onrender.com/update-email",
         {
           userId,
           newEmail,
         },
         {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
       setEmail(newEmail);
       setIsEditingEmail(false);
@@ -199,7 +199,7 @@ const Profile = ({ theme }) => {
     // Extract username from the full URL if entered
     const extractUsername = (url) => {
       const match = url.match(
-        /(?:https?:\/\/)?(?:www\.)?(?:github\.com|linkedin\.com\/in|facebook\.com|instagram\.com|twitter\.com|x\.com)\/([\w-]+)/i,
+        /(?:https?:\/\/)?(?:www\.)?(?:github\.com|linkedin\.com\/in|facebook\.com|instagram\.com|twitter\.com|x\.com)\/([\w-]+)/i
       );
       return match ? match[1] : url; // If a match is found, return the username; otherwise, return the input as is
     };
@@ -221,16 +221,16 @@ const Profile = ({ theme }) => {
       };
 
       await axios.post(
-        "http://localhost:3001/update-social-media",
+        "https://doctalk-31u3.onrender.com/update-social-media",
         {
           userId,
           ...socialMediaToSend, // Spread the updated social media object
         },
         {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
 
       setError("");
@@ -256,7 +256,7 @@ const Profile = ({ theme }) => {
   const getUsername = (url) => {
     if (url) {
       const match = url.match(
-        /(?:https?:\/\/)?(?:www\.)?(?:github\.com|linkedin\.com\/in|facebook\.com|instagram\.com|twitter\.com|x\.com)\/([\w-]+)/i,
+        /(?:https?:\/\/)?(?:www\.)?(?:github\.com|linkedin\.com\/in|facebook\.com|instagram\.com|twitter\.com|x\.com)\/([\w-]+)/i
       );
       return match ? match[1] : url;
     }
@@ -564,7 +564,7 @@ const Profile = ({ theme }) => {
                 </IconButton>
               )}
             </Box>
-          ),
+          )
         )}
 
         {/* Thank you message */}

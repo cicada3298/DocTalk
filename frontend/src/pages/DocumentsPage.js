@@ -34,7 +34,6 @@ const DocumentsPage = ({ theme }) => {
   const [searchLoading, setSearchLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
 
-  
   useEffect(() => {
     const handler = setTimeout(() => {
       if (searchTerm.trim() !== "") {
@@ -43,25 +42,25 @@ const DocumentsPage = ({ theme }) => {
         setSearchResults([]);
       }
     }, 300);
-    
+
     return () => {
       clearTimeout(handler);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchTerm]);
-  
+
   const handleSearchChange = async () => {
     const token = localStorage.getItem("token");
     setSearchLoading(true);
     try {
       const response = await axios.get(
-  `http://localhost:3001/search-documents/${userId}?searchTerm=${encodeURIComponent(searchTerm)}`,
-  {
-    headers: {
-      Authorization: `Bearer ${token}`, // ✅ Include token here
-    },
-  }
-);
+        `https://doctalk-31u3.onrender.com/search-documents/${userId}?searchTerm=${encodeURIComponent(searchTerm)}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`, // ✅ Include token here
+          },
+        }
+      );
 
       const results = Object.keys(response.data)
         .filter((key) => key !== "message")
@@ -96,12 +95,12 @@ const DocumentsPage = ({ theme }) => {
       const token = localStorage.getItem("token");
       try {
         const response = await axios.get(
-          `http://localhost:3001/documents/${userId}`,
+          `https://doctalk-31u3.onrender.com/documents/${userId}`,
           {
-    headers: {
-      Authorization: `Bearer ${token}`, // ✅ Include token here
-    },
-  }
+            headers: {
+              Authorization: `Bearer ${token}`, // ✅ Include token here
+            },
+          }
         );
         const documentsData = response.data;
         const documentsList = Object.keys(documentsData)
@@ -123,19 +122,19 @@ const DocumentsPage = ({ theme }) => {
   const indexOfFirstDocument = indexOfLastDocument - documentsPerPage;
   const currentDocuments = documents.slice(
     indexOfFirstDocument,
-    indexOfLastDocument,
+    indexOfLastDocument
   );
 
   const handleViewDocument = async (docId) => {
     try {
       const token = localStorage.getItem("token");
       const response = await axios.get(
-        `http://localhost:3001/document-details/${userId}/${docId}`,
+        `https://doctalk-31u3.onrender.com/document-details/${userId}/${docId}`,
         {
-    headers: {
-      Authorization: `Bearer ${token}`, // ✅ Include token here
-    },
-  }
+          headers: {
+            Authorization: `Bearer ${token}`, // ✅ Include token here
+          },
+        }
       );
       const { summary, originalText } = response.data;
       navigate("/home", { state: { summary, originalText } });
@@ -152,12 +151,12 @@ const DocumentsPage = ({ theme }) => {
     try {
       const token = localStorage.getItem("token");
       await axios.delete(
-        `http://localhost:3001/documents/${userId}/${docId}`,
+        `https://doctalk-31u3.onrender.com/documents/${userId}/${docId}`,
         {
-    headers: {
-      Authorization: `Bearer ${token}`, // ✅ Include token here
-    },
-  }
+          headers: {
+            Authorization: `Bearer ${token}`, // ✅ Include token here
+          },
+        }
       );
       setDocuments(documents.filter((doc) => doc.id !== docId));
       setSearchResults(searchResults.filter((doc) => doc.docId !== docId));
@@ -178,12 +177,12 @@ const DocumentsPage = ({ theme }) => {
     try {
       const token = localStorage.getItem("token");
       await axios.delete(
-        `http://localhost:3001/documents/${userId}`,
+        `https://doctalk-31u3.onrender.com/documents/${userId}`,
         {
-    headers: {
-      Authorization: `Bearer ${token}`, // ✅ Include token here
-    },
-  }
+          headers: {
+            Authorization: `Bearer ${token}`, // ✅ Include token here
+          },
+        }
       );
       setDocuments([]);
       handleCloseDeleteAllDialog();
@@ -203,7 +202,7 @@ const DocumentsPage = ({ theme }) => {
       const token = localStorage.getItem("token");
       // Find the current document by docId
       const currentDoc = documents.find(
-        (doc) => doc.id === docId || doc.docId === docId,
+        (doc) => doc.id === docId || doc.docId === docId
       );
 
       // Check if the new title is different from the current title
@@ -216,30 +215,30 @@ const DocumentsPage = ({ theme }) => {
 
       // If title is modified, send the request to update the title on the server
       await axios.post(
-        `http://localhost:3001/update-document-title`,
+        `https://doctalk-31u3.onrender.com/update-document-title`,
         {
           userId,
           docId,
           newTitle,
         },
         {
-    headers: {
-      Authorization: `Bearer ${token}`, // ✅ Include token here
-    },
-  }
+          headers: {
+            Authorization: `Bearer ${token}`, // ✅ Include token here
+          },
+        }
       );
 
       // Update the title in the documents array
       const updatedDocuments = documents.map((doc) =>
         doc.id === docId || doc.docId === docId
           ? { ...doc, title: newTitle }
-          : doc,
+          : doc
       );
       setDocuments(updatedDocuments);
 
       // Update the title in the searchResults array
       const updatedSearchResults = searchResults.map((doc) =>
-        doc.docId === docId ? { ...doc, title: newTitle } : doc,
+        doc.docId === docId ? { ...doc, title: newTitle } : doc
       );
       setSearchResults(updatedSearchResults);
 

@@ -46,7 +46,10 @@ app.use(express.json());
 
 // CORS configuration
 const corsOptions = {
-  origin: "http://localhost:3000", // your frontend origin
+  origin: [
+    "http://localhost:3000",                         // for local frontend
+    "https://doc-talk-five.vercel.app"          // for deployed frontend
+  ],
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true,

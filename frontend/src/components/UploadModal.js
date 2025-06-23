@@ -67,7 +67,7 @@ const UploadModal = ({
           .catch((error) => {
             console.error("Error initializing GAPI:", error);
             setErrorMessage(
-              "Google API initialization failed: " + error.message,
+              "Google API initialization failed: " + error.message
             );
             setOpenSnackbar(true);
             reject(error);
@@ -78,7 +78,7 @@ const UploadModal = ({
 
   useEffect(() => {
     initClient().catch((error) =>
-      console.error("Google API client initialization failed:", error),
+      console.error("Google API client initialization failed:", error)
     );
   }, []);
 
@@ -110,14 +110,16 @@ const UploadModal = ({
 
   // Dropzone for file selection
   const onDrop = (acceptedFiles) => {
-    setFile(acceptedFiles[0]);  //sets file state
+    setFile(acceptedFiles[0]); //sets file state
     setDocumentFile(acceptedFiles[0]);
     setTitle(acceptedFiles[0].name);
   };
 
-  const { getRootProps, getInputProps } = useDropzone({   //for dropping file
+  const { getRootProps, getInputProps } = useDropzone({
+    //for dropping file
     onDrop,
-    accept: {   //options accepted
+    accept: {
+      //options accepted
       "application/pdf": [],
       "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
         [],
@@ -186,15 +188,15 @@ const UploadModal = ({
       const token = localStorage.getItem("token");
       // Send the extracted text to the backend endpoint
       const response = await axios.post(
-      "http://localhost:3001/upload",
-      payload,
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+        "https://doctalk-31u3.onrender.com/upload",
+        payload,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       setLoading(false);
       setProgressMessage("");
       const { summary, originalText } = response.data;

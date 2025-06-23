@@ -188,16 +188,16 @@ const Home = ({ theme }) => {
     setLoadingRefinement(true);
     try {
       const response = await axios.post(
-        "http://localhost:3001/refine-summary",
+        "https://doctalk-31u3.onrender.com/refine-summary",
         {
           summary,
           refinementInstructions,
         },
         {
-    headers: {
-      Authorization: `Bearer ${token}`, // ✅ Add token here
-    },
-  }
+          headers: {
+            Authorization: `Bearer ${token}`, // ✅ Add token here
+          },
+        }
       );
       setRefinedSummary(response.data.refinedSummary);
       setShowRefineModal(false);
@@ -224,20 +224,20 @@ const Home = ({ theme }) => {
     try {
       setLoadingAudio(true);
       const response = await axios.post(
-        "http://localhost:3001/process-audio",
+        "https://doctalk-31u3.onrender.com/process-audio",
         formData,
         {
           headers: {
             "Content-Type": "multipart/form-data",
             Authorization: `Bearer ${token}`,
           },
-        },
+        }
       );
       setAudioResponse(response.data.summary);
       audioRef.current?.scrollIntoView({ behavior: "smooth" });
     } catch (error) {
       showErrorToast(
-        "Cannot process audio. Please ensure the audio is clear and audible, and try again.",
+        "Cannot process audio. Please ensure the audio is clear and audible, and try again."
       );
       console.error("Error processing audio:", error);
     } finally {
@@ -250,19 +250,19 @@ const Home = ({ theme }) => {
     setLoadingRecommendations(true);
     try {
       const response = await axios.post(
-        "http://localhost:3001/actionable-recommendations",
+        "https://doctalk-31u3.onrender.com/actionable-recommendations",
         {
           documentText: originalText,
         },
         {
-    headers: {
-      Authorization: `Bearer ${token}`, // ✅ Add token here
-    },
-  }
+          headers: {
+            Authorization: `Bearer ${token}`, // ✅ Add token here
+          },
+        }
       );
 
       const formattedRecommendations = formatAsMarkdown(
-        response.data.recommendations,
+        response.data.recommendations
       );
       setRecommendations(formattedRecommendations);
       recommendationsRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -278,16 +278,16 @@ const Home = ({ theme }) => {
     setLoadingRewrite(true);
     try {
       const response = await axios.post(
-        "http://localhost:3001/content-rewriting",
+        "https://doctalk-31u3.onrender.com/content-rewriting",
         {
           documentText: originalText,
           style: desiredStyle,
         },
         {
-    headers: {
-      Authorization: `Bearer ${token}`, // ✅ Add token here
-    },
-  }
+          headers: {
+            Authorization: `Bearer ${token}`, // ✅ Add token here
+          },
+        }
       );
 
       setRewrittenContent(response.data.rewrittenContent);
@@ -334,16 +334,16 @@ const Home = ({ theme }) => {
     setLoadingLanguage(true);
     try {
       const response = await axios.post(
-        "http://localhost:3001/summary-in-language",
+        "https://doctalk-31u3.onrender.com/summary-in-language",
         {
           documentText: originalText,
           language,
         },
         {
-    headers: {
-      Authorization: `Bearer ${token}`, // ✅ Add token here
-    },
-  }
+          headers: {
+            Authorization: `Bearer ${token}`, // ✅ Add token here
+          },
+        }
       );
       const formattedLanguageSummary = formatAsMarkdown(response.data.summary);
       setLanguageSummary(formattedLanguageSummary);
@@ -362,15 +362,15 @@ const Home = ({ theme }) => {
     setLoadingSentiment(true); // Start loading
     try {
       const response = await axios.post(
-        "http://localhost:3001/sentiment-analysis",
+        "https://doctalk-31u3.onrender.com/sentiment-analysis",
         {
           documentText: text,
         },
         {
-    headers: {
-      Authorization: `Bearer ${token}`, // ✅ Add token here
-    },
-  }
+          headers: {
+            Authorization: `Bearer ${token}`, // ✅ Add token here
+          },
+        }
       );
 
       // Check if the response data contains the expected properties
@@ -422,15 +422,15 @@ const Home = ({ theme }) => {
     setLoadingKeyIdeas(true);
     try {
       const response = await axios.post(
-        "http://localhost:3001/generate-key-ideas",
+        "https://doctalk-31u3.onrender.com/generate-key-ideas",
         {
           documentText: originalText,
         },
         {
-    headers: {
-      Authorization: `Bearer ${token}`, // ✅ Add token here
-    },
-  }
+          headers: {
+            Authorization: `Bearer ${token}`, // ✅ Add token here
+          },
+        }
       );
       const formattedKeyIdeas = formatAsMarkdown(response.data.keyIdeas);
       setKeyIdeas(formattedKeyIdeas);
@@ -447,18 +447,18 @@ const Home = ({ theme }) => {
     setLoadingDiscussionPoints(true);
     try {
       const response = await axios.post(
-        "http://localhost:3001/generate-discussion-points",
+        "https://doctalk-31u3.onrender.com/generate-discussion-points",
         {
           documentText: originalText,
         },
         {
-    headers: {
-      Authorization: `Bearer ${token}`, // ✅ Add token here
-    },
-  }
+          headers: {
+            Authorization: `Bearer ${token}`, // ✅ Add token here
+          },
+        }
       );
       const formattedDiscussionPoints = formatAsMarkdown(
-        response.data.discussionPoints,
+        response.data.discussionPoints
       );
       setDiscussionPoints(formattedDiscussionPoints);
       discussionPointsRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -474,15 +474,15 @@ const Home = ({ theme }) => {
     setLoadingBulletSummary(true);
     try {
       const response = await axios.post(
-        "http://localhost:3001/bullet-summary",
+        "https://doctalk-31u3.onrender.com/bullet-summary",
         {
           documentText: originalText,
         },
         {
-    headers: {
-      Authorization: `Bearer ${token}`, // ✅ Add token here
-    },
-  }
+          headers: {
+            Authorization: `Bearer ${token}`, // ✅ Add token here
+          },
+        }
       );
       const formattedBulletSummary = formatAsMarkdown(response.data.summary);
       setBulletSummary(formattedBulletSummary);

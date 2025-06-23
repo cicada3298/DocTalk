@@ -33,15 +33,15 @@ const ForgotPassword = ({ theme }) => {
     setSuccess("");
 
     try {
-      const token = localStorage.getItem("token")
+      const token = localStorage.getItem("token");
       const response = await axios.post(
-        "http://localhost:3001/verify-email",
+        "https://doctalk-31u3.onrender.com/verify-email",
         { email },
         {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
       setEmailVerified(true);
       setSuccess("Email verified. Please enter your new password.");
@@ -67,15 +67,15 @@ const ForgotPassword = ({ theme }) => {
     setSuccess("");
 
     try {
-      const token = localStorage.getItem("token")
+      const token = localStorage.getItem("token");
       await axios.post(
-        "http://localhost:3001/forgot-password",
+        "https://doctalk-31u3.onrender.com/forgot-password",
         { email, newPassword },
         {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
       setSuccess("Password updated successfully.");
       navigate("/login");

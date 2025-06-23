@@ -37,9 +37,9 @@ const Register = ({ theme }) => {
     try {
       setLoading(true);
       const response = await axios.post(
-        "http://localhost:3001/register",
+        "https://doctalk-31u3.onrender.com/register",
         { email, password },
-        { headers: { "Content-Type": "application/json" } },
+        { headers: { "Content-Type": "application/json" } }
       );
       setLoading(false);
       setSuccess("User registered successfully! You can now login.");
