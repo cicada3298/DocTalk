@@ -11,7 +11,7 @@ const swaggerOptions = {
         "Comprehensive API documentation for the DocTalk application.",
       contact: {
         name: "DocTalk",
-        // url:  vercel url
+        url:  "https://doc-talk-five.vercel.app/",
         email: "vaibhavchaudhary898@gmail.com",
       },
       license: {
