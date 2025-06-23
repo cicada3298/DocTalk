@@ -48,7 +48,7 @@
     "react-scripts": "^5.0.1",
     "redis": "^4.7.0",
     "sentiment": "^5.0.2",
-    "serve-favicon": "^2.5.0",
+    "serve-favicon": "^2.5.1",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1",
     "uuid": "^10.0.0"
