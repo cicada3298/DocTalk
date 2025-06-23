@@ -170,7 +170,10 @@ app.post("/content-rewriting", authenticateToken, contentRewriting);
 app.get("/search-documents/:userId", authenticateToken, searchDocuments);
 app.post("/process-audio", authenticateToken, processAudioFile);
 app.post("/refine-summary", authenticateToken, refineSummary);
-
+app.get("/health", (req, res) => {
+  console.log("Health check hit")
+  res.status(200).send("OK");
+});
 // Error handling for unsupported routes
 app.use((req, res) => {
   res.status(404).json({ error: "Route not found" });
@@ -191,9 +194,7 @@ app.use((err, req, res, next) => {
   next();
 });
 
-app.get("/health", (req, res) => {
-  res.status(200).send("OK");
-});
+
 
 // Start the server
 const port = process.env.PORT || 3001;
