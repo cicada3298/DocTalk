@@ -198,11 +198,8 @@ app.get("/health", (req, res) => {
 // Start the server
 const port = process.env.PORT || 3001;
 
-if (process.env.NODE_ENV !== "production") {
-  // For local development only.
-  app.listen(port, "0.0.0.0", () => {
-    console.log(`Server listening on port ${port}`);
-  });
-}
+app.listen(port, "0.0.0.0", () => {
+  console.log(`Server listening on port ${port}`);
+});
 
 module.exports = app;
