@@ -314,9 +314,15 @@ const ChatModal = ({ theme }) => {
 
     try {
       setLoading(true);
+      const token = localStorage.getItem("token")
       const res = await axios.post(
         "http://localhost:3001/chat",
         { message, originalText, sessionId },
+        {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
       );
       setLoading(false);
       const aiResponse = res.data.response;

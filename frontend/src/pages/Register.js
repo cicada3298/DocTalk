@@ -54,7 +54,7 @@ const Register = ({ theme }) => {
       console.log(response.data);
     } catch (err) {
       setLoading(false);
-      setError(err.response?.data.details || err.message);
+      setError(err.response?.data.error);
       console.log(err.response?.data || err.message);
     }
   };
