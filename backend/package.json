@@ -10,7 +10,7 @@
   },
   "private": false,
   "scripts": {
-    "start": "nodemon index.js",
+    "start": "node index.js",
     "build": "echo 'Skipping build step for Vercel'",
     "test": "nodemon index.js",
     "server": "node index.js",

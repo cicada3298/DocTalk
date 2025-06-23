@@ -1,4 +1,4 @@
-// const favicon = require("serve-favicon");
+const favicon = require("serve-favicon");
 const path = require("path");
 const express = require("express");
 const cors = require("cors");
@@ -54,7 +54,7 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 app.options("*", cors(corsOptions));
-// app.use(favicon(path.join(__dirname, "public", "favicon.ico")));
+app.use(favicon(path.join(__dirname, "public", "favicon.ico")));
 
 // Initialize Redis client
 initializeRedis();
