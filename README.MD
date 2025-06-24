@@ -72,11 +72,8 @@ We have deployed the entire app on **Vercel** and **Render**. You can access the
 - **Profile Management**: Update your profile information, social media links, and theme settings.
 - **User Authentication**: Secure registration, login, and password reset functionality.
 - **Document History**: View all uploaded documents and their details.
-- **Mobile App Integration**: React Native mobile app for on-the-go document management.
 - **API Documentation**: Swagger (OpenAPI) documentation for all API endpoints.
 - **Authentication Middleware**: Secure routes with JWT and Firebase authentication middleware.
-- **Containerization**: Dockerized the app with Docker & K8s for easy deployment and scaling.
-- **Continuous Integration**: Automated testing and deployment with GitHub Actions & Jenkins.
 
 <h2 id="technologies">⚙️ Technologies</h2>
 
@@ -117,7 +114,6 @@ We have deployed the entire app on **Vercel** and **Render**. You can access the
 - **CI/CD & Deployment**:
   - **Render**: Cloud platform for hosting and scaling web applications. (Used to deploy the backend)
   - **Vercel**: Cloud platform for hosting and deploying web applications. (Used to deploy the frontend)
-  - **Netlify**: Cloud platform for hosting and deploying web applications. (Used as a backup)
 
 ![React](https://img.shields.io/badge/-React-61DAFB?logo=react&logoColor=white&style=for-the-badge)
 ![Material-UI](https://img.shields.io/badge/-Material--UI-0081CB?logo=react&logoColor=white&style=for-the-badge)
@@ -136,7 +132,6 @@ We have deployed the entire app on **Vercel** and **Render**. You can access the
 ![OpenAPI](https://img.shields.io/badge/-OpenAPI-6BA539?logo=openapi&logoColor=white&style=for-the-badge)
 ![Render](https://img.shields.io/badge/-Render-FF6B6B?logo=render&logoColor=white&style=for-the-badge)
 ![Vercel](https://img.shields.io/badge/-Vercel-000000?logo=vercel&logoColor=white&style=for-the-badge)
-![Netlify](https://img.shields.io/badge/-Netlify-00C7B7?logo=netlify&logoColor=white&style=for-the-badge)
 
 <h2 id="user-interface">🖼️ User Interface</h2>
 
