@@ -28,6 +28,10 @@ const swaggerOptions = {
         url: "http://127.0.0.1:3000",
         description: "Local server - ensure you have the backend running",
       },
+      {
+        url: "https://doctalk-31u3.onrender.com",
+        description: "Render backend (production)",
+      },
     ],
     components: {
       securitySchemes: {
