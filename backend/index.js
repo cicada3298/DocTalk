@@ -52,19 +52,31 @@ const allowedOrigins = [
 
 app.use(cors({
   origin: function (origin, callback) {
-    // allow requests with no origin (Swagger, Postman, curl)
+    console.log("🌐 CORS check for origin:", origin);
+
+    // allow Swagger, Postman, curl
     if (!origin) return callback(null, true);
+
+    const allowedOrigins = [
+      "http://localhost:3000",
+      "https://doc-talk-five.vercel.app",
+      "https://doctalk-31u3.onrender.com"
+    ];
 
     if (allowedOrigins.includes(origin)) {
       return callback(null, true);
     } else {
-      return callback(new Error("Not allowed by CORS"));
+      console.warn("❌ Blocked by CORS:", origin);
+      // TEMP: allow all for debugging
+      return callback(null, true);
+      // LATER: switch back to callback(new Error("Not allowed by CORS"))
     }
   },
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
 }));
+
 
 app.options("*", (req, res) => {
   res.header("Access-Control-Allow-Origin", req.headers.origin || "*");
@@ -120,7 +132,11 @@ app.get("/", (req, res) => {
 
 // Logging Middleware
 app.use((req, res, next) => {
-  console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
+  console.log("🛰️ Incoming request:", {
+    method: req.method,
+    url: req.url,
+    origin: req.headers.origin,
+  });
   next();
 });
 
