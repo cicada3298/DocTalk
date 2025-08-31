@@ -52,9 +52,7 @@ const allowedOrigins = [
 
 app.use(cors({
   origin: function (origin, callback) {
-    console.log("🌐 CORS check for origin:", origin);
-
-    // allow Swagger, Postman, curl
+    console.log("🌐 Incoming Origin:", origin);
     if (!origin) return callback(null, true);
 
     const allowedOrigins = [
@@ -64,18 +62,16 @@ app.use(cors({
     ];
 
     if (allowedOrigins.includes(origin)) {
+      console.log("✅ Allowed by CORS:", origin);
       return callback(null, true);
     } else {
       console.warn("❌ Blocked by CORS:", origin);
-      // TEMP: allow all for debugging
-      return callback(null, true);
-      // LATER: switch back to callback(new Error("Not allowed by CORS"))
+      return callback(new Error("Not allowed by CORS"));
     }
   },
   credentials: true,
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"],
 }));
+
 
 
 app.options("*", (req, res) => {
