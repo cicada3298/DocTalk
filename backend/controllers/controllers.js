@@ -61,31 +61,35 @@ const { generateToken } = require("../middleware/jwt");
 exports.registerUser = async (req, res) => {
   const { email, password } = req.body;
   try {
-    const userRecord = await createUser(email, password);
+    // Step 1: Create user in Firebase Auth via Admin SDK
+    const userRecord = await admin.auth().createUser({
+      email,
+      password,  // ✅ important: must set password here
+    });
+
     const creationDate = new Date();
+    console.log(`✅ User created in Firebase Auth: ${userRecord.uid}`);
 
-    console.log(`User created in Firebase Auth: ${userRecord.uid}`);
-
-    // Create a user document in Firestore with email, empty documents list, and the creation date
+    // Step 2: Create Firestore user document
     await firestore.collection("users").doc(userRecord.uid).set({
       email: email,
       documents: [],
       createdAt: creationDate,
     });
 
-    console.log("Firestore user document created successfully");
-    sendSuccessResponse(res, 201, "User registered successfully", {
+    console.log("✅ Firestore user document created successfully");
+
+    return sendSuccessResponse(res, 201, "User registered successfully", {
       userId: userRecord.uid,
     });
   } catch (error) {
-    console.error("Error during Firestore document creation:", error.message);
+    console.error("🔥 Registration error:", error.message);
     if (error.code === "auth/email-already-exists") {
       return sendErrorResponse(res, 409, "Email already in use");
     }
-    sendErrorResponse(res, 400, "User registration failed", error.message);
+    return sendErrorResponse(res, 400, "User registration failed", error.message);
   }
 };
-
 /**
  * @swagger
  * /login:
