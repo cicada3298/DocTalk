@@ -52,24 +52,16 @@ const allowedOrigins = [
 
 app.use(cors({
   origin: function (origin, callback) {
-    console.log("🌐 Incoming Origin:", origin);
-    if (!origin) return callback(null, true);
-
-    const allowedOrigins = [
-      "http://localhost:3000",
-      "https://doc-talk-five.vercel.app",
-      "https://doctalk-31u3.onrender.com"
-    ];
-
-    if (allowedOrigins.includes(origin)) {
-      console.log("✅ Allowed by CORS:", origin);
+    console.log("🌐 Origin check:", origin);
+    if (!origin || allowedOrigins.includes(origin)) {
       return callback(null, true);
-    } else {
-      console.warn("❌ Blocked by CORS:", origin);
-      return callback(new Error("Not allowed by CORS"));
     }
+    console.warn("❌ Blocked by CORS:", origin);
+    return callback(null, false); // instead of throwing an Error
   },
   credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
 }));
 
 
