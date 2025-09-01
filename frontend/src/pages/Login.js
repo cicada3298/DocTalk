@@ -23,6 +23,7 @@ const Login = ({ theme, onLogin }) => {
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
+    console.log("Login initialized");
     e.preventDefault();
     setLoading(true);
     setError("");
