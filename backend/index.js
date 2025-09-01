@@ -46,7 +46,7 @@ app.use(express.json());
 
 const allowedOrigins = [
   "http://localhost:3000",            // local frontend
-  "https://doc-talk-five.vercel.app"  // deployed frontend
+  "https://doc-talk-five.vercel.app",  // deployed frontend
   "https://doctalk-31u3.onrender.com"
 ];
 
