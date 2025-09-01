@@ -76,7 +76,11 @@ app.options("*", (req, res) => {
 
 app.use(favicon(path.join(__dirname, "public", "favicon.ico")));
 
-initializeRedis();
+try {
+  initializeRedis();
+} catch (err) {
+  console.error("⚠️ Redis init failed:", err.message);
+}
 app.get("/swagger.json", (req, res) => {
   res.json(swaggerDocs);
 });
