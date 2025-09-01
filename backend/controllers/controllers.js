@@ -138,11 +138,15 @@ exports.loginUser = async (req, res) => {
     const token = generateToken({ userId: uid, email });
     console.log("✅ JWT generated");
 
-    await cacheUserSession(uid, {
-      token,
-      email,
-      loginTime: new Date().toISOString(),
-    });
+    try {
+  await cacheUserSession(uid, {
+    token,
+    email,
+    loginTime: new Date().toISOString(),
+  });
+} catch (err) {
+  console.error("⚠️ Failed to cache session:", err.message);
+}
     console.log("✅ Session cached in Redis");
 
     return sendSuccessResponse(res, 200, "Login successful", {
