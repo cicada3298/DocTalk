@@ -37,7 +37,7 @@ const Login = ({ theme, onLogin }) => {
           },
         }
       );
-
+      console.log(response);
       onLogin();
       setLoading(false);
 
