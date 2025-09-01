@@ -121,39 +121,40 @@ exports.loginUser = async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    // Step 1: Verify email and password using Firebase REST API
+    console.log("🔹 Login attempt:", email);
+
     const firebaseApiKey = process.env.FIREBASE_API_KEY;
+    console.log("🔹 Using Firebase API key:", !!firebaseApiKey);
+
     const response = await axios.post(
       `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${firebaseApiKey}`,
-      {
-        email,
-        password,
-        returnSecureToken: true,
-      }
+      { email, password, returnSecureToken: true }
     );
+
+    console.log("✅ Firebase login success for:", email);
 
     const uid = response.data.localId;
 
-    // Step 2: Generate JWT token from your middleware
     const token = generateToken({ userId: uid, email });
+    console.log("✅ JWT generated");
 
-    // Step 3: Cache the session in Redis
     await cacheUserSession(uid, {
       token,
       email,
       loginTime: new Date().toISOString(),
     });
+    console.log("✅ Session cached in Redis");
 
-    // Step 4: Send response with JWT token
-    sendSuccessResponse(res, 200, "Login successful", {
+    return sendSuccessResponse(res, 200, "Login successful", {
       token,
       userId: uid,
     });
   } catch (error) {
-    console.log("Login error:", error.response?.data || error.message);
-    sendErrorResponse(res, 401, "Invalid email or password", error.message);
+    console.error("🔥 Login error:", error.response?.data || error.message);
+    return sendErrorResponse(res, 401, "Invalid email or password", error.message);
   }
 };
+
 
 /**
  * @swagger
