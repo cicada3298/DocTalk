@@ -5,8 +5,6 @@ Welcome to **DocTalk**! This is a full-stack **(FERN-Stack)** application that i
 ## **📚 Table of Contents**
 
 - [**📖 Overview**](#-overview)
-- [**🚀 Live Deployments**](#live-deployments)
-  - [**Live Statuses**](#live-statuses)
 - [**✨ Features**](#features)
 - [**⚙️ Technologies**](#technologies)
 - [**🖼️ User Interface**](#user-interface)
@@ -20,10 +18,6 @@ Welcome to **DocTalk**! This is a full-stack **(FERN-Stack)** application that i
   - [**API Architecture**](#api-architecture)
   - [**API Testing**](#api-testing)
   - [**Error Handling**](#error-handling)
-- [**🚧 Deployment**](#deployment)
-  - [**Frontend Deployment (Vercel)**](#frontend-deployment-vercel)
-  - [**Backend Deployment (Render)**](#backend-deployment-render)
-  - [**Important Note about Backend Deployment (Please Read)**](#important-note-about-backend-deployment)
 - [**👨‍💻 Author**](#author)
 
 <h2 id="-overview">📖 Overview</h2>
@@ -32,28 +26,7 @@ The **DocTalk** app is designed to provide users with a simple, AI-powered docum
 
 **DocTalk** is created using the **FERN-Stack** architecture, which stands for **Firebase, Express, React, and Node.js**. The backend is built with Node.js and Express, integrating Firebase for user authentication and MongoDB for data storage. The frontend is built with React and Material-UI, providing a responsive and user-friendly interface.
 
-> [!IMPORTANT]
-> It is currently deployed live on **Vercel** and **Render**. You can access the live app **[here](https://doc-talk-five.vercel.app/)**.
 
-<h2 id="live-deployments">🚀 Live Deployments</h2>
-
-We have deployed the entire app on **Vercel** and **Render**. You can access the live app **[here](https://doc-talk-five.vercel.app/)**.
-
-- **Frontend**: Deployed on **Vercel**. Access the live frontend **[here](https://doc-talk-five.vercel.app/)**.
-  - **Backend**: Deployed on **Render**. You can access the backup backend **[here](https://doctalk-31u3.onrender.com/)**.
-
-> [!IMPORTANT]
-> The backend server may take a few seconds to wake up if it has been inactive for a while. The first API call may take a bit longer to respond. Subsequent calls should be faster as the server warms up.
-
-### Live Statuses
-
-[![Deployed with Vercel](https://img.shields.io/badge/Deployed%20with-Vercel-green?&logo=vercel)](https://doc-talk-five.vercel.app/)
-[![Render Success](https://img.shields.io/badge/Render-Success-green?&logo=render)](https://doctalk-31u3.onrender.com/)
-[![Firebase Functional](https://img.shields.io/badge/Firebase-Functional-green?&logo=firebase)](https://firebase.google.com)
-[![MongoDB Atlas Connected](https://img.shields.io/badge/MongoDB%20Atlas-Connected-green?&logo=mongodb)](https://www.mongodb.com/cloud/atlas)
-[![Redis Cache Enabled](https://img.shields.io/badge/Redis-Cache%20Enabled-green?&logo=redis)](https://redis.io)
-[![RabbitMQ Enabled](https://img.shields.io/badge/RabbitMQ-Enabled-green?&logo=rabbitmq)](https://www.rabbitmq.com)
-[![Swagger & OpenAPI](https://img.shields.io/badge/Swagger%20%26%20OpenAPI-Documented-blue?&logo=swagger)](https://swagger.io)
 
 <h2 id="features">✨ Features</h2>
 
@@ -103,17 +76,9 @@ We have deployed the entire app on **Vercel** and **Render**. You can access the
 - **Database**:
   - **MongoDB**: NoSQL database for storing user data and documents.
   - **Firestore**: Cloud Firestore for storing user data and documents.
-  - **Redis**: In-memory data structure store for caching.
-- **Mobile App**:
-  - **React Native**: JavaScript framework for building mobile applications.
-  - **Firebase SDK**: Firebase services for mobile applications.
-  - **React Navigation**: Routing and navigation for React Native apps.
 - **API Documentation**:
   - **Swagger**: OpenAPI documentation for all API endpoints.
   - **OpenAPI**: Specification for building APIs with RESTful architecture.
-- **CI/CD & Deployment**:
-  - **Render**: Cloud platform for hosting and scaling web applications. (Used to deploy the backend)
-  - **Vercel**: Cloud platform for hosting and deploying web applications. (Used to deploy the frontend)
 
 ![React](https://img.shields.io/badge/-React-61DAFB?logo=react&logoColor=white&style=for-the-badge)
 ![Material-UI](https://img.shields.io/badge/-Material--UI-0081CB?logo=react&logoColor=white&style=for-the-badge)
@@ -130,8 +95,6 @@ We have deployed the entire app on **Vercel** and **Render**. You can access the
 ![React Native](https://img.shields.io/badge/-React%20Native-61DAFB?logo=react&logoColor=white&style=for-the-badge)
 ![Swagger](https://img.shields.io/badge/-Swagger-85EA2D?logo=swagger&logoColor=white&style=for-the-badge)
 ![OpenAPI](https://img.shields.io/badge/-OpenAPI-6BA539?logo=openapi&logoColor=white&style=for-the-badge)
-![Render](https://img.shields.io/badge/-Render-FF6B6B?logo=render&logoColor=white&style=for-the-badge)
-![Vercel](https://img.shields.io/badge/-Vercel-000000?logo=vercel&logoColor=white&style=for-the-badge)
 
 <h2 id="user-interface">🖼️ User Interface</h2>
 
@@ -449,11 +412,7 @@ The backend APIs uses centralized error handling to capture and log errors. Resp
 }
 ```
 
-### **Backend Deployment (Render)**
 
-- The backend can be deployed on platforms like **Heroku**, **Render**, or **Vercel**.
-
-- Currently, we are using **Render** to host the backend. You can access the live backend **[here](https://DocTalk-ai-app.onrender.com/)**.
 
 <h2 id="author">👨‍💻 Author</h2>
 
