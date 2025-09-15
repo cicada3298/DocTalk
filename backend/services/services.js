@@ -8,10 +8,27 @@ const {
   GoogleAIFileManager,
   FileState,
 } = require("@google/generative-ai/server");
-require('dotenv').config({ path: '../.env' });
+require("dotenv").config();
 
-// Parse the private key (ensuring it's correctly formatted)
-const privateKey = process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, "\n");
+function buildServiceAccountFromEnv() {
+  // raw private key may contain literal \n sequences — convert them to real newlines
+  const rawKey = process.env.FIREBASE_PRIVATE_KEY || '';
+  const privateKey = rawKey ? rawKey.replace(/\\n/g, '\n') : undefined;
+
+  return {
+    type: process.env.FIREBASE_TYPE,
+    project_id: process.env.FIREBASE_PROJECT_ID,
+    private_key_id: process.env.FIREBASE_PRIVATE_KEY_ID,
+    private_key: privateKey,
+    client_email: process.env.FIREBASE_CLIENT_EMAIL,
+    client_id: process.env.FIREBASE_CLIENT_ID,
+    auth_uri: process.env.FIREBASE_AUTH_URI,
+    token_uri: process.env.FIREBASE_TOKEN_URI,
+    auth_provider_x509_cert_url: process.env.FIREBASE_AUTH_PROVIDER_X509_CERT_URL,
+    client_x509_cert_url: process.env.FIREBASE_CLIENT_X509_CERT_URL,
+  };
+}
+
 
 // Multer setup for handling file uploads
 const uploadDir = "/tmp/uploads";
@@ -24,22 +41,23 @@ if (!fs.existsSync(uploadDir)) {
 const upload = multer({ dest: uploadDir });
 
 // Initialize Firebase Admin using environment variables from .env
-firebaseAdmin.initializeApp({
-  credential: firebaseAdmin.credential.cert({
-    type: process.env.FIREBASE_TYPE,
-    project_id: process.env.FIREBASE_PROJECT_ID,
-    private_key_id: process.env.FIREBASE_PRIVATE_KEY_ID,
-    private_key: privateKey,
-    client_email: process.env.FIREBASE_CLIENT_EMAIL,
-    client_id: process.env.FIREBASE_CLIENT_ID,
-    auth_uri: process.env.FIREBASE_AUTH_URI,
-    token_uri: process.env.FIREBASE_TOKEN_URI,
-    auth_provider_x509_cert_url:
-      process.env.FIREBASE_AUTH_PROVIDER_X509_CERT_URL,
-    client_x509_cert_url: process.env.FIREBASE_CLIENT_X509_CERT_URL,
-  }),
-  databaseURL: process.env.FIREBASE_DATABASE_URL,
-});
+if (!firebaseAdmin.apps.length) {
+  const serviceAccount = buildServiceAccountFromEnv();
+
+  // Basic validation to catch missing envs early
+  if (!serviceAccount.project_id || !serviceAccount.client_email || !serviceAccount.private_key) {
+    console.error('Missing Firebase service account env vars. Check FIREBASE_PROJECT_ID, FIREBASE_CLIENT_EMAIL, FIREBASE_PRIVATE_KEY.');
+    // Do not throw in production bootstrapping if you prefer, but throwing surfaces the issue early
+    throw new Error('Firebase service account not configured properly in env');
+  }
+
+  firebaseAdmin.initializeApp({
+    credential: firebaseAdmin.credential.cert(serviceAccount),
+    // optional: include databaseURL only if you need Realtime DB
+    databaseURL: process.env.FIREBASE_DATABASE_URL || undefined,
+  });
+  console.log('Firebase Admin initialized for project:', serviceAccount.project_id);
+}
 
 // Firestore for storing user documents
 const firestore = firebaseAdmin.firestore();
