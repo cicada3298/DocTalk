@@ -5,8 +5,11 @@ const cors = require("cors");
 require("dotenv").config();
 const swaggerDocs = require("./swagger/swagger");
 const { initializeRedis } = require("./redis/redisClient");
-const { authenticateToken } = require("./middleware/jwt");
-require("dotenv").config();
+const { graphqlHTTP } = require("express-graphql");
+const { makeExecutableSchema } = require("@graphql-tools/schema");
+const typeDefs = require("./graphql/schema");
+const resolvers = require("./graphql/resolvers");
+
 const {
   registerUser,
   loginUser,
@@ -44,73 +47,81 @@ const {
 const app = express();
 app.use(express.json());
 
-const allowedOrigins = [
-  "http://localhost:3000",            // local frontend
-  "https://doc-talk-five.vercel.app",  // deployed frontend
-  "https://doctalk-31u3.onrender.com"
-];
+// CORS configuration
+const corsOptions = {
+  origin: "*", // Allow all origins
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: false, // Must be false if using '*'
+};
 
-app.use(cors({
-  origin: (origin, callback) => {
-    const allowedOrigins = [
-      "http://localhost:3000",
-      "https://doc-talk-five.vercel.app",
-      "https://doctalk-31u3.onrender.com"
-    ];
-    if (!origin || allowedOrigins.includes(origin)) {
-      return callback(null, true);
-    }
-    console.warn("❌ Blocked by CORS:", origin);
-    return callback(null, false);
-  },
-  credentials: true,
-}));
-
-
-app.options("*", (req, res) => {
-  res.header("Access-Control-Allow-Origin", req.headers.origin || "*");
-  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-  res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
-  res.header("Access-Control-Allow-Credentials", "true");
-  res.sendStatus(204);
-});
+app.use(cors(corsOptions));
 
 app.use(favicon(path.join(__dirname, "public", "favicon.ico")));
 
-try {
-  initializeRedis();
-} catch (err) {
-  console.error("⚠️ Redis init failed:", err.message);
-}
+const schema = makeExecutableSchema({ typeDefs, resolvers });
+
+// GraphQL endpoint
+app.use(
+  "/graphql",
+  graphqlHTTP({
+    schema,
+    graphiql: true,
+  }),
+);
+
+// Initialize Redis client
+initializeRedis();
+
+/**
+ * Serve swagger.json
+ * This route returns the JSON definition for the API documentation.
+ */
 app.get("/swagger.json", (req, res) => {
   res.json(swaggerDocs);
 });
 
-
+/**
+ * Serve Swagger UI from a CDN
+ * This route returns HTML that loads the Swagger UI assets from a CDN
+ * and points it to /swagger.json.
+ */
 app.get("/api-docs", (req, res) => {
   res.send(`
     <!DOCTYPE html>
     <html>
       <head>
         <meta charset="UTF-8" />
-        <title>DocTalk API Docs</title>
+        <title>DocuThinker API Docs</title>
+        <!-- Include the swagger-ui CSS from a CDN -->
         <link rel="stylesheet" type="text/css" href="https://unpkg.com/swagger-ui-dist@4.15.5/swagger-ui.css" />
         <link rel="icon" type="image/png" href="https://unpkg.com/swagger-ui-dist@4.15.5/favicon-32x32.png" sizes="32x32" />
         <link rel="icon" type="image/png" href="https://unpkg.com/swagger-ui-dist@4.15.5/favicon-16x16.png" sizes="16x16" />
-        <style>body { margin: 0; padding: 0; }</style>
+        <style>
+          body {
+            margin: 0;
+            padding: 0;
+          }
+        </style>
       </head>
       <body>
         <div id="swagger-ui"></div>
+        <!-- Include the Swagger UI bundle and standalone preset from a CDN -->
         <script src="https://unpkg.com/swagger-ui-dist@4.15.5/swagger-ui-bundle.js"></script>
         <script src="https://unpkg.com/swagger-ui-dist@4.15.5/swagger-ui-standalone-preset.js"></script>
         <script>
           window.onload = function() {
-            SwaggerUIBundle({
+            // Build a system
+            const ui = SwaggerUIBundle({
               url: '/swagger.json',
               dom_id: '#swagger-ui',
-              presets: [SwaggerUIBundle.presets.apis, SwaggerUIStandalonePreset],
+              presets: [
+                SwaggerUIBundle.presets.apis,
+                SwaggerUIStandalonePreset
+              ],
               layout: "StandaloneLayout"
             })
+            window.ui = ui
           }
         </script>
       </body>
@@ -125,77 +136,71 @@ app.get("/", (req, res) => {
 
 // Logging Middleware
 app.use((req, res, next) => {
-  console.log("🛰️ Incoming request:", {
-    method: req.method,
-    url: req.url,
-    origin: req.headers.origin,
-  });
+  console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
   next();
 });
 
 // Routes
 app.post("/register", registerUser);
 app.post("/login", loginUser);
+app.post("/upload", uploadDocument);
+app.post("/generate-key-ideas", generateKeyIdeas);
+app.post("/generate-discussion-points", generateDiscussionPoints);
+app.post("/chat", chatWithAI);
 app.post("/forgot-password", forgotPassword);
 app.post("/verify-email", verifyEmail);
-app.post("/upload", authenticateToken, uploadDocument);
-app.post("/generate-key-ideas", generateKeyIdeas);
-app.post("/generate-discussion-points", authenticateToken, generateDiscussionPoints);
-app.post("/chat", authenticateToken, chatWithAI);
-app.get("/documents/:userId", authenticateToken, getAllDocuments);
-app.get("/documents/:userId/:docId", authenticateToken, getDocumentById);
-app.get("/document-details/:userId/:docId", authenticateToken, getDocumentDetails);
-app.delete("/documents/:userId/:docId", authenticateToken, deleteDocument);
-app.delete("/documents/:userId", authenticateToken, deleteAllDocuments);
-app.post("/update-email", authenticateToken, updateUserEmail);
-app.post("/update-password", authenticateToken, updateUserPassword);
-app.get("/days-since-joined/:userId", authenticateToken, getDaysSinceJoined);
-app.get("/document-count/:userId", authenticateToken, getDocumentCount);
-app.get("/users/:userId", authenticateToken, getUserEmail);
-app.post("/update-document-title", authenticateToken, updateDocumentTitle);
-app.get("/user-joined-date/:userId", authenticateToken, getUserJoinedDate);
-app.put("/update-theme", authenticateToken, updateTheme);
-app.get("/social-media/:userId", authenticateToken, getSocialMedia);
-app.post("/update-social-media", authenticateToken, updateSocialMedia);
-app.post("/sentiment-analysis", authenticateToken, sentimentAnalysis);
-app.post("/actionable-recommendations", authenticateToken, actionableRecommendations);
-app.post("/summary-in-language", authenticateToken, summaryInLanguage);
-app.post("/bullet-summary", authenticateToken, bulletSummary);
-app.post("/content-rewriting", authenticateToken, contentRewriting);
-app.get("/search-documents/:userId", authenticateToken, searchDocuments);
-app.post("/process-audio", authenticateToken, processAudioFile);
-app.post("/refine-summary", authenticateToken, refineSummary);
-app.get("/health", (req, res) => {
-  console.log("Health check hit");
-  res.status(200).send("OK");
-});
+app.get("/documents/:userId", getAllDocuments);
+app.get("/documents/:userId/:docId", getDocumentById);
+app.get("/document-details/:userId/:docId", getDocumentDetails);
+app.delete("/documents/:userId/:docId", deleteDocument);
+app.delete("/documents/:userId", deleteAllDocuments);
+app.post("/update-email", updateUserEmail);
+app.post("/update-password", updateUserPassword);
+app.get("/days-since-joined/:userId", getDaysSinceJoined);
+app.get("/document-count/:userId", getDocumentCount);
+app.get("/users/:userId", getUserEmail);
+app.post("/update-document-title", updateDocumentTitle);
+app.get("/user-joined-date/:userId", getUserJoinedDate);
+app.put("/update-theme", updateTheme);
+app.get("/social-media/:userId", getSocialMedia);
+app.post("/update-social-media", updateSocialMedia);
+app.post("/sentiment-analysis", sentimentAnalysis);
+app.post("/actionable-recommendations", actionableRecommendations);
+app.post("/summary-in-language", summaryInLanguage);
+app.post("/bullet-summary", bulletSummary);
+app.post("/content-rewriting", contentRewriting);
+app.get("/search-documents/:userId", searchDocuments);
+app.post("/process-audio", processAudioFile);
+app.post("/refine-summary", refineSummary);
 
 // Error handling for unsupported routes
 app.use((req, res) => {
   res.status(404).json({ error: "Route not found" });
 });
 
-// ✅ Unauthorized handler FIRST
-app.use((err, req, res, next) => {
-  if (err.name === "UnauthorizedError") {
-    return res.status(401).json({ error: "Unauthorized request" });
-  }
-  next(err);
-});
-
-// ✅ Global error handler LAST
+// Global error handler
 app.use((err, req, res, next) => {
   console.error("Global error handler:", err.stack);
-  res.status(500).json({
-    error: "An internal server error occurred",
-    details: err.message,
-  });
+  res
+    .status(500)
+    .json({ error: "An internal server error occurred", details: err.message });
+});
+
+app.use((err, req, res, next) => {
+  if (err.name === "UnauthorizedError") {
+    res.status(401).json({ error: "Unauthorized request" });
+  }
+  next();
 });
 
 // Start the server
-const port = process.env.PORT || 3001;
-app.listen(port, "0.0.0.0", () => {
-  console.log(`Server listening on port ${port}`);
-});
+const port = process.env.PORT || 3000;
+
+if (process.env.NODE_ENV !== "production") {
+  // For local development only.
+  app.listen(port, "0.0.0.0", () => {
+    console.log(`Server listening on port ${port}`);
+  });
+}
 
 module.exports = app;
