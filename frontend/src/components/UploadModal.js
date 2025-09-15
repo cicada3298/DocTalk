@@ -188,7 +188,7 @@ const UploadModal = ({
       const token = localStorage.getItem("token");
       // Send the extracted text to the backend endpoint
       const response = await axios.post(
-        "https://doctalk-31u3.onrender.com/upload",
+        "https://doc-talk-backend-theta.vercel.app/upload",
         payload,
         {
           headers: {
