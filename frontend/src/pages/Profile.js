@@ -90,7 +90,7 @@ const Profile = ({ theme }) => {
       const fetchData = async () => {
         try {
           const emailResponse = await axios.get(
-            `https://doctalk-31u3.onrender.com/users/${userId}`,
+            `https://doc-talk-backend-theta.vercel.app/users/${userId}`,
             {
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -98,7 +98,7 @@ const Profile = ({ theme }) => {
             }
           );
           const daysResponse = await axios.get(
-            `https://doctalk-31u3.onrender.com/days-since-joined/${userId}`,
+            `https://doc-talk-backend-theta.vercel.app/days-since-joined/${userId}`,
             {
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -106,7 +106,7 @@ const Profile = ({ theme }) => {
             }
           );
           const documentResponse = await axios.get(
-            `https://doctalk-31u3.onrender.com/document-count/${userId}`,
+            `https://doc-talk-backend-theta.vercel.app/document-count/${userId}`,
             {
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -114,7 +114,7 @@ const Profile = ({ theme }) => {
             }
           );
           const joinedDateResponse = await axios.get(
-            `https://doctalk-31u3.onrender.com/user-joined-date/${userId}`,
+            `https://doc-talk-backend-theta.vercel.app/user-joined-date/${userId}`,
             {
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -122,7 +122,7 @@ const Profile = ({ theme }) => {
             }
           );
           const socialMediaResponse = await axios.get(
-            `https://doctalk-31u3.onrender.com/social-media/${userId}`,
+            `https://doc-talk-backend-theta.vercel.app/social-media/${userId}`,
             {
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -171,7 +171,7 @@ const Profile = ({ theme }) => {
 
     try {
       await axios.post(
-        "https://doctalk-31u3.onrender.com/update-email",
+        "https://doc-talk-backend-theta.vercel.app/update-email",
         {
           userId,
           newEmail,
@@ -221,7 +221,7 @@ const Profile = ({ theme }) => {
       };
 
       await axios.post(
-        "https://doctalk-31u3.onrender.com/update-social-media",
+        "https://doc-talk-backend-theta.vercel.app/update-social-media",
         {
           userId,
           ...socialMediaToSend, // Spread the updated social media object
