@@ -54,8 +54,6 @@ app.use(cors(corsOptions));
 
 app.use(favicon(path.join(__dirname, "public", "favicon.ico")));
 
-const schema = makeExecutableSchema({ typeDefs, resolvers });
-
 // Initialize Redis client
 initializeRedis();
 
