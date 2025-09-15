@@ -37,7 +37,7 @@ const Register = ({ theme }) => {
     try {
       setLoading(true);
       const response = await axios.post(
-        "https://doctalk-31u3.onrender.com/register",
+        "https://doc-talk-backend-theta.vercel.app/register",
         { email, password },
         { headers: { "Content-Type": "application/json" } }
       );
