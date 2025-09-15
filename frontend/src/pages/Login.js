@@ -29,7 +29,7 @@ const Login = ({ theme, onLogin }) => {
     setError("");
     try {
       const response = await axios.post(
-        "https://doctalk-31u3.onrender.com/login",
+        "https://doc-talk-backend-theta.vercel.app/login",
         { email, password },
         {
           headers: {
