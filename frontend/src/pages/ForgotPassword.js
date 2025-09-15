@@ -35,7 +35,7 @@ const ForgotPassword = ({ theme }) => {
     try {
       const token = localStorage.getItem("token");
       const response = await axios.post(
-        "https://doctalk-31u3.onrender.com/verify-email",
+        "https://doc-talk-backend-theta.vercel.app/verify-email",
         { email },
         {
           headers: {
@@ -69,7 +69,7 @@ const ForgotPassword = ({ theme }) => {
     try {
       const token = localStorage.getItem("token");
       await axios.post(
-        "https://doctalk-31u3.onrender.com/forgot-password",
+        "https://doc-talk-backend-theta.vercel.app/forgot-password",
         { email, newPassword },
         {
           headers: {
