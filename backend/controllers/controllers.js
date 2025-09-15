@@ -16,20 +16,10 @@ const {
   processAudio,
   refineSummary,
 } = require("../services/services");
-const {
-  cacheUserSession,
-  cacheDocumentMetadata,
-  cacheQueryResults,
-  cacheRecentlyViewedDocument,
-  invalidateCache,
-  fetchFromCache,
-} = require("../redis/redisClient");
-const axios = require("axios");
 const { sendErrorResponse, sendSuccessResponse } = require("../views/views");
 const { IncomingForm } = require("formidable");
 const { v4: uuidv4 } = require("uuid");
 const firebaseAdmin = require("firebase-admin");
-const { generateToken } = require("../middleware/jwt");
 
 /**
  * @swagger
@@ -61,35 +51,28 @@ const { generateToken } = require("../middleware/jwt");
 exports.registerUser = async (req, res) => {
   const { email, password } = req.body;
   try {
-    // Step 1: Create user in Firebase Auth via Admin SDK
-    const userRecord = await admin.auth().createUser({
-      email,
-      password,  // ✅ important: must set password here
-    });
-
+    const userRecord = await createUser(email, password);
     const creationDate = new Date();
-    console.log(`✅ User created in Firebase Auth: ${userRecord.uid}`);
 
-    // Step 2: Create Firestore user document
+    console.log(`User created in Firebase Auth: ${userRecord.uid}`);
+
+    // Create a user document in Firestore with email, empty documents list, and the creation date
     await firestore.collection("users").doc(userRecord.uid).set({
       email: email,
       documents: [],
       createdAt: creationDate,
     });
 
-    console.log("✅ Firestore user document created successfully");
-
-    return sendSuccessResponse(res, 201, "User registered successfully", {
+    console.log("Firestore user document created successfully");
+    sendSuccessResponse(res, 201, "User registered successfully", {
       userId: userRecord.uid,
     });
   } catch (error) {
-    console.error("🔥 Registration error:", error.message);
-    if (error.code === "auth/email-already-exists") {
-      return sendErrorResponse(res, 409, "Email already in use");
-    }
-    return sendErrorResponse(res, 400, "User registration failed", error.message);
+    console.error("Error during Firestore document creation:", error.message);
+    sendErrorResponse(res, 400, "User registration failed", error.message);
   }
 };
+
 /**
  * @swagger
  * /login:
@@ -118,47 +101,19 @@ exports.registerUser = async (req, res) => {
  *         description: Invalid credentials
  */
 exports.loginUser = async (req, res) => {
-  const { email, password } = req.body;
-
+  const { email } = req.body;
   try {
-    console.log("🔹 Login attempt:", email);
+    const customToken = await loginUser(email);
+    const user = await firebaseAdmin.auth().getUserByEmail(email); // Fetch user details
 
-    const firebaseApiKey = process.env.FIREBASE_API_KEY;
-    console.log("🔹 Using Firebase API key:", !!firebaseApiKey);
-
-    const response = await axios.post(
-      `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${firebaseApiKey}`,
-      { email, password, returnSecureToken: true }
-    );
-
-    console.log("✅ Firebase login success for:", email);
-
-    const uid = response.data.localId;
-
-    const token = generateToken({ userId: uid, email });
-    console.log("✅ JWT generated");
-
-    try {
-  await cacheUserSession(uid, {
-    token,
-    email,
-    loginTime: new Date().toISOString(),
-  });
-} catch (err) {
-  console.error("⚠️ Failed to cache session:", err.message);
-}
-    console.log("✅ Session cached in Redis");
-
-    return sendSuccessResponse(res, 200, "Login successful", {
-      token,
-      userId: uid,
+    sendSuccessResponse(res, 200, "Custom token generated", {
+      customToken,
+      userId: user.uid, // Send back userId
     });
   } catch (error) {
-    console.error("🔥 Login error:", error.response?.data || error.message);
-    return sendErrorResponse(res, 401, "Invalid email or password", error.message);
+    sendErrorResponse(res, 401, "Invalid credentials", error.message);
   }
 };
-
 
 /**
  * @swagger
@@ -198,54 +153,75 @@ exports.loginUser = async (req, res) => {
  */
 exports.uploadDocument = async (req, res) => {
   try {
+    // Expecting JSON payload with title and text properties
     const { userId, title, text } = req.body;
+    console.log(title)
     if (!text || !title) {
-      return sendErrorResponse(res, 400, "Missing title or text in request body");
+      return sendErrorResponse(
+        res,
+        400,
+        "Missing title or text in request body",
+      );
     }
 
-    // Generate summary
+    // Generate summary based on the provided text
     const result = await generateSummary(text);
-    console.log(result);
 
-    // Track generated docId for caching
-    let docId;
 
+    // If a userId is provided, update the Firestore user document
     if (userId) {
-      try {
-        const actualUserId = Array.isArray(userId) ? userId[0] : userId;
-        const userRef = firestore.collection("users").doc(actualUserId);
-        const userDoc = await userRef.get();
+  // Normalize and validate userId
+  const actualUserId = Array.isArray(userId) ? userId[0] : userId;
+  console.log('/upload: received userId raw:', userId, 'normalized:', actualUserId);
 
-        if (!userDoc.exists) {
-          return sendErrorResponse(res, 404, "User not found");
-        }
+  if (!actualUserId || typeof actualUserId !== 'string' || actualUserId.trim() === '') {
+    console.error('/upload: invalid userId:', actualUserId);
+    return sendErrorResponse(res, 400, 'Invalid userId provided');
+  }
 
-        docId = firestore.collection("users").doc().id;
+  // Ensure firestore is initialized
+  if (!firestore || typeof firestore.collection !== 'function') {
+    console.error('/upload: firestore is not initialized', !!firestore);
+    return sendErrorResponse(res, 500, 'Server misconfiguration: Firestore not initialized');
+  }
 
-        const documentData = {
+  // Try/catch around Firestore ops
+  try {
+    const userRef = firestore.collection('users').doc(actualUserId);
+    const userDoc = await userRef.get();
+
+    if (!userDoc.exists) {
+      console.warn('/upload: user not found for id', actualUserId);
+      return sendErrorResponse(res, 404, 'User not found');
+    }
+
+    // Generate docId safely
+    const docId = firestore.collection('users').doc().id;
+    console.log('/upload: generated docId', docId);
+
+    // Attempt to update documents array and catch update errors
+    try {
+      await userRef.update({
+        documents: firebaseAdmin.firestore.FieldValue.arrayUnion({
           id: docId,
           title: title,
           originalText: result.originalText,
           summary: result.summary,
-        };
-
-        await userRef.update({
-          documents: firebaseAdmin.firestore.FieldValue.arrayUnion(documentData),
-        });
-
-        // ✅ Cache the document metadata
-        await cacheDocumentMetadata(docId, {
-          title,
-          author: actualUserId,
-          createdAt: new Date().toISOString(),
-          tags: [],
-        });
-      } catch (firestoreErr) {
-        console.error("Firestore update error:", firestoreErr);
-        return sendErrorResponse(res, 500, "Firestore error", firestoreErr.message);
-      }
+        }),
+      });
+    } catch (updateErr) {
+      console.error('/upload: Firestore update failed:', updateErr);
+      return sendErrorResponse(res, 500, 'Failed to save document metadata', updateErr.message || String(updateErr));
     }
+  } catch (fsErr) {
+    // Any read / permission / connectivity errors end up here
+    console.error('/upload: Firestore read error full:', fsErr);
+  console.error('/upload: Firestore read error stack:', fsErr.stack);
+  return sendErrorResponse(res, 500, 'Failed to access user data', fsErr.message || String(fsErr));
+  }
+}
 
+    // Send success response with the summary and the original text
     sendSuccessResponse(res, 200, "Document summarized", {
       summary: result.summary,
       originalText: result.originalText,
@@ -388,7 +364,7 @@ exports.generateDiscussionPoints = async (req, res) => {
       res,
       500,
       "Failed to generate discussion points",
-      error.message
+      error.message,
     );
   }
 };
@@ -682,7 +658,7 @@ exports.getDocumentDetails = async (req, res) => {
       res,
       500,
       "Failed to retrieve document details",
-      error.message
+      error.message,
     );
   }
 };
@@ -736,16 +712,7 @@ exports.searchDocuments = async (req, res) => {
   const { userId } = req.params;
   const { searchTerm } = req.query;
 
-  const cacheKey = `query:results:${userId}:search:${searchTerm.toLowerCase()}`;
-
   try {
-    // ✅ Step 1: Try fetching from Redis cache first
-    const cached = await fetchFromCache(cacheKey);
-    if (cached) {
-      return sendSuccessResponse(res, 200, "Documents retrieved from cache", cached);
-    }
-
-    // Step 2: Fallback to Firestore
     const userDoc = await firestore.collection("users").doc(userId).get();
     if (!userDoc.exists) {
       return sendErrorResponse(res, 404, "User not found");
@@ -754,11 +721,15 @@ exports.searchDocuments = async (req, res) => {
     const userData = userDoc.data();
     const documents = userData.documents || [];
 
+    // Filter documents that match the search term in the title or content
     const matchingDocuments = documents.filter((doc) => {
+      // Safely extract title if it's an array
       const title = Array.isArray(doc.title) ? doc.title.join(" ") : doc.title;
+      // Check if title and originalText are strings before processing them
       const titleMatch =
         typeof title === "string" &&
         title.toLowerCase().includes(searchTerm.toLowerCase());
+
       return titleMatch;
     });
 
@@ -766,6 +737,7 @@ exports.searchDocuments = async (req, res) => {
       return sendErrorResponse(res, 404, "No matching documents found");
     }
 
+    // Format the response with relevant document details
     const response = matchingDocuments.map((doc) => ({
       docId: doc.id,
       title: Array.isArray(doc.title) ? doc.title.join(" ") : doc.title,
@@ -775,15 +747,11 @@ exports.searchDocuments = async (req, res) => {
           : "",
     }));
 
-    // ✅ Step 3: Store results in Redis
-    await cacheQueryResults(cacheKey, response);
-
     sendSuccessResponse(res, 200, "Documents retrieved successfully", response);
   } catch (error) {
     sendErrorResponse(res, 500, "Failed to search documents", error.message);
   }
 };
-
 
 /**
  * @swagger
@@ -825,7 +793,7 @@ exports.deleteDocument = async (req, res) => {
 
     const userData = userDoc.data();
     const updatedDocuments = userData.documents.filter(
-      (doc) => doc.id !== docId
+      (doc) => doc.id !== docId,
     );
 
     await firestore.collection("users").doc(userId).update({
@@ -1014,7 +982,7 @@ exports.getDaysSinceJoined = async (req, res) => {
       res,
       500,
       "Failed to retrieve days since joined",
-      error.message
+      error.message,
     );
   }
 };
@@ -1063,7 +1031,7 @@ exports.getDocumentCount = async (req, res) => {
       res,
       500,
       "Failed to retrieve document count",
-      error.message
+      error.message,
     );
   }
 };
@@ -1156,26 +1124,19 @@ exports.updateDocumentTitle = async (req, res) => {
 
     const userData = userDoc.data();
     const documentIndex = userData.documents.findIndex(
-      (doc) => doc.id === docId
+      (doc) => doc.id === docId,
     );
 
     if (documentIndex === -1) {
       return sendErrorResponse(res, 404, "Document not found");
     }
 
-    // Update the title in Firestore
+    // Update the title of the specific document
     userData.documents[documentIndex].title = newTitle;
 
+    // Save the updated user document back to Firestore
     await firestore.collection("users").doc(userId).update({
       documents: userData.documents,
-    });
-
-    // ✅ Update metadata cache in Redis
-    await cacheDocumentMetadata(docId, {
-      title: newTitle,
-      author: userId,
-      createdAt: new Date().toISOString(), // optional: you could retain original createdAt if needed
-      tags: [], // or retrieve/update existing tags
     });
 
     sendSuccessResponse(res, 200, "Document title updated successfully");
@@ -1184,7 +1145,7 @@ exports.updateDocumentTitle = async (req, res) => {
       res,
       500,
       "Failed to update document title",
-      error.message
+      error.message,
     );
   }
 };
@@ -1253,7 +1214,7 @@ exports.getUserJoinedDate = async (req, res) => {
       res,
       500,
       "Failed to retrieve user joined date",
-      error.message
+      error.message,
     );
   }
 };
@@ -1302,7 +1263,7 @@ exports.updateTheme = async (req, res) => {
     return sendErrorResponse(
       res,
       400,
-      'Invalid theme. Theme must be either "light" or "dark".'
+      'Invalid theme. Theme must be either "light" or "dark".',
     );
   }
 
@@ -1386,7 +1347,7 @@ exports.getSocialMedia = async (req, res) => {
       res,
       500,
       "Failed to retrieve social media links",
-      error.message
+      error.message,
     );
   }
 };
@@ -1459,7 +1420,7 @@ exports.updateSocialMedia = async (req, res) => {
       res,
       500,
       "Failed to update social media links",
-      error.message
+      error.message,
     );
   }
 };
@@ -1641,7 +1602,7 @@ exports.summaryInLanguage = async (req, res) => {
 
     const translatedSummary = await generateSummaryInLanguage(
       documentText,
-      language
+      language,
     );
 
     res.status(200).send({ summary: translatedSummary });
