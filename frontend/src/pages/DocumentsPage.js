@@ -54,7 +54,7 @@ const DocumentsPage = ({ theme }) => {
     setSearchLoading(true);
     try {
       const response = await axios.get(
-        `https://doctalk-31u3.onrender.com/search-documents/${userId}?searchTerm=${encodeURIComponent(searchTerm)}`,
+        `https://doc-talk-backend-theta.vercel.app/search-documents/${userId}?searchTerm=${encodeURIComponent(searchTerm)}`,
         {
           headers: {
             Authorization: `Bearer ${token}`, // ✅ Include token here
@@ -95,7 +95,7 @@ const DocumentsPage = ({ theme }) => {
       const token = localStorage.getItem("token");
       try {
         const response = await axios.get(
-          `https://doctalk-31u3.onrender.com/documents/${userId}`,
+          `https://doc-talk-backend-theta.vercel.app/documents/${userId}`,
           {
             headers: {
               Authorization: `Bearer ${token}`, // ✅ Include token here
@@ -129,7 +129,7 @@ const DocumentsPage = ({ theme }) => {
     try {
       const token = localStorage.getItem("token");
       const response = await axios.get(
-        `https://doctalk-31u3.onrender.com/document-details/${userId}/${docId}`,
+        `https://doc-talk-backend-theta.vercel.app/document-details/${userId}/${docId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`, // ✅ Include token here
@@ -151,7 +151,7 @@ const DocumentsPage = ({ theme }) => {
     try {
       const token = localStorage.getItem("token");
       await axios.delete(
-        `https://doctalk-31u3.onrender.com/documents/${userId}/${docId}`,
+        `https://doc-talk-backend-theta.vercel.app/documents/${userId}/${docId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`, // ✅ Include token here
@@ -177,7 +177,7 @@ const DocumentsPage = ({ theme }) => {
     try {
       const token = localStorage.getItem("token");
       await axios.delete(
-        `https://doctalk-31u3.onrender.com/documents/${userId}`,
+        `https://doc-talk-backend-theta.vercel.app/documents/${userId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`, // ✅ Include token here
@@ -215,7 +215,7 @@ const DocumentsPage = ({ theme }) => {
 
       // If title is modified, send the request to update the title on the server
       await axios.post(
-        `https://doctalk-31u3.onrender.com/update-document-title`,
+        `https://doc-talk-backend-theta.vercel.app/update-document-title`,
         {
           userId,
           docId,
