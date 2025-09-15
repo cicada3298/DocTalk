@@ -316,7 +316,7 @@ const ChatModal = ({ theme }) => {
       setLoading(true);
       const token = localStorage.getItem("token");
       const res = await axios.post(
-        "https://doctalk-31u3.onrender.com/chat",
+        "https://doc-talk-backend-theta.vercel.app/chat",
         { message, originalText, sessionId },
         {
           headers: {
