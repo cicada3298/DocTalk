@@ -5,6 +5,8 @@ Welcome to **DocTalk**! This is a full-stack **(FERN-Stack)** application that i
 ## **📚 Table of Contents**
 
 - [**📖 Overview**](#-overview)
+- [**🚀 Live Deployments**](#live-deployments)
+  - [**Live Statuses**](#live-statuses)
 - [**✨ Features**](#features)
 - [**⚙️ Technologies**](#technologies)
 - [**🖼️ User Interface**](#user-interface)
@@ -26,7 +28,15 @@ The **DocTalk** app is designed to provide users with a simple, AI-powered docum
 
 **DocTalk** is created using the **FERN-Stack** architecture, which stands for **Firebase, Express, React, and Node.js**. The backend is built with Node.js and Express, integrating Firebase for user authentication and MongoDB for data storage. The frontend is built with React and Material-UI, providing a responsive and user-friendly interface.
 
+<h2 id="live-deployments">🚀 Live Deployments</h2>
 
+> [!TIP]
+> Access the live app at **[https://doc-talk-frontend-liart.vercel.app/](https://doc-talk-frontend-liart.vercel.app/) by clicking on the link or copying it into your browser! 🚀**
+
+We have deployed the entire app on **Vercel**. You can access the live app **[here](https://doc-talk-frontend-liart.vercel.app)**.
+
+- **Frontend**: Deployed on **Vercel**. Access the live frontend **[here](https://doc-talk-frontend-liart.vercel.app/)**.
+- **Backend**: Deployed on **Vercel**. You can access the live backend **[here](https://doc-talk-backend-theta.vercel.app/)**.
 
 <h2 id="features">✨ Features</h2>
 
@@ -93,8 +103,6 @@ The **DocTalk** app is designed to provide users with a simple, AI-powered docum
 ![MongoDB](https://img.shields.io/badge/-MongoDB-47A248?logo=mongodb&logoColor=white&style=for-the-badge)
 ![Redis](https://img.shields.io/badge/-Redis-DC382D?logo=redis&logoColor=white&style=for-the-badge)
 ![React Native](https://img.shields.io/badge/-React%20Native-61DAFB?logo=react&logoColor=white&style=for-the-badge)
-![Swagger](https://img.shields.io/badge/-Swagger-85EA2D?logo=swagger&logoColor=white&style=for-the-badge)
-![OpenAPI](https://img.shields.io/badge/-OpenAPI-6BA539?logo=openapi&logoColor=white&style=for-the-badge)
 
 <h2 id="user-interface">🖼️ User Interface</h2>
 
@@ -183,9 +191,7 @@ Ensure you have the following tools installed:
 - **Firebase Admin SDK** credentials
 - **Redis** for caching
 - **MongoDB** for data storage
-- **RabbitMQ** for handling asynchronous tasks
 - **Postman** for API testing (optional)
-- **React Native CLI** for building the mobile app
 - **Firebase SDK** for mobile app integration
 - **Firebase API Keys and Secrets** for authentication
 - **Tailwind CSS** for styling the frontend
@@ -296,18 +302,6 @@ The backend of **DocTalk** provides several API endpoints for user authenticatio
 | POST       | `/content-rewriting`                 | Rewrites or rephrases the provided document text based on a style                                   |
 | POST       | `/actionable-recommendations`        | Generates actionable recommendations based on the document text                                     |
 
-### API Documentation
-
-- **Swagger Documentation**: You can access the Swagger documentation for all API endpoints by running the backend server and navigating to `http://localhost:3001/api-docs`.
-- **Redoc Documentation**: You can access the Redoc documentation for all API endpoints by running the backend server and navigating to `http://localhost:3001/api-docs/redoc`.
-
-For example, our API endpoints documentation looks like this:
-
-<p align="center">
-  <img src="images/swagger.png" alt="Swagger Documentation" width="100%" style="border-radius: 8px">
-</p>
-
-This will generate TypeScript files for the API endpoints in the `api` directory. Feel free to replace or modify the command as needed.
 
 ### Using the `openapi.yaml` File
 
@@ -322,44 +316,6 @@ This will generate TypeScript files for the API endpoints in the `api` directory
 - Import `openapi.yaml` into [Postman](https://www.postman.com/):
   - Open Postman → Import → Select `openapi.yaml`.
   - Test the API endpoints directly from Postman.
-- Or use [Swagger UI](https://swagger.io/tools/swagger-ui/):
-  - Provide the file URL or upload it to view and test endpoints.
-
-3. **Generate Client Libraries**
-
-- Install OpenAPI Generator:
-  ```bash
-  npm install @openapitools/openapi-generator-cli -g
-  ```
-- Generate a client library:
-  ```bash
-  openapi-generator-cli generate -i openapi.yaml -g <language> -o ./client
-  ```
-- Replace `<language>` with the desired programming language.
-
-4. **Generate Server Stubs**
-
-- Generate a server stub:
-  ```bash
-  openapi-generator-cli generate -i openapi.yaml -g <framework> -o ./server
-  ```
-- Replace `<framework>` with the desired framework.
-
-5. **Run a Mock Server**
-
-- Install Prism:
-  ```bash
-  npm install -g @stoplight/prism-cli
-  ```
-- Start the mock server:
-  ```bash
-  prism mock openapi.yaml
-  ```
-
-6. **Validate the OpenAPI File**
-
-- Use [Swagger Validator](https://validator.swagger.io/):
-  - Upload `openapi.yaml` or paste its content to check for errors.
 
 ### **API Architecture**
 
