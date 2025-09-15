@@ -188,7 +188,7 @@ const Home = ({ theme }) => {
     setLoadingRefinement(true);
     try {
       const response = await axios.post(
-        "https://doctalk-31u3.onrender.com/refine-summary",
+        "https://doc-talk-backend-theta.vercel.app/refine-summary",
         {
           summary,
           refinementInstructions,
@@ -224,7 +224,7 @@ const Home = ({ theme }) => {
     try {
       setLoadingAudio(true);
       const response = await axios.post(
-        "https://doctalk-31u3.onrender.com/process-audio",
+        "https://doc-talk-backend-theta.vercel.app/process-audio",
         formData,
         {
           headers: {
@@ -250,7 +250,7 @@ const Home = ({ theme }) => {
     setLoadingRecommendations(true);
     try {
       const response = await axios.post(
-        "https://doctalk-31u3.onrender.com/actionable-recommendations",
+        "https://doc-talk-backend-theta.vercel.app/actionable-recommendations",
         {
           documentText: originalText,
         },
@@ -278,7 +278,7 @@ const Home = ({ theme }) => {
     setLoadingRewrite(true);
     try {
       const response = await axios.post(
-        "https://doctalk-31u3.onrender.com/content-rewriting",
+        "https://doc-talk-backend-theta.vercel.app/content-rewriting",
         {
           documentText: originalText,
           style: desiredStyle,
@@ -334,7 +334,7 @@ const Home = ({ theme }) => {
     setLoadingLanguage(true);
     try {
       const response = await axios.post(
-        "https://doctalk-31u3.onrender.com/summary-in-language",
+        "https://doc-talk-backend-theta.vercel.app/summary-in-language",
         {
           documentText: originalText,
           language,
@@ -362,7 +362,7 @@ const Home = ({ theme }) => {
     setLoadingSentiment(true); // Start loading
     try {
       const response = await axios.post(
-        "https://doctalk-31u3.onrender.com/sentiment-analysis",
+        "https://doc-talk-backend-theta.vercel.app/sentiment-analysis",
         {
           documentText: text,
         },
@@ -422,7 +422,7 @@ const Home = ({ theme }) => {
     setLoadingKeyIdeas(true);
     try {
       const response = await axios.post(
-        "https://doctalk-31u3.onrender.com/generate-key-ideas",
+        "https://doc-talk-backend-theta.vercel.app/generate-key-ideas",
         {
           documentText: originalText,
         },
@@ -447,7 +447,7 @@ const Home = ({ theme }) => {
     setLoadingDiscussionPoints(true);
     try {
       const response = await axios.post(
-        "https://doctalk-31u3.onrender.com/generate-discussion-points",
+        "https://doc-talk-backend-theta.vercel.app/generate-discussion-points",
         {
           documentText: originalText,
         },
@@ -474,7 +474,7 @@ const Home = ({ theme }) => {
     setLoadingBulletSummary(true);
     try {
       const response = await axios.post(
-        "https://doctalk-31u3.onrender.com/bullet-summary",
+        "https://doc-talk-backend-theta.vercel.app/bullet-summary",
         {
           documentText: originalText,
         },
